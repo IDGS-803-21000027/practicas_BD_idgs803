@@ -1,0 +1,20 @@
+
+{%extends 'layout.html' %}
+
+{%block content %}
+{% import "_macros.html" as macros %}
+
+    <h1>Empleados</h1>
+    <form action="" method="post" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {{macros.render_field(form.nombre, class="form-controls")}}
+    {{macros.render_field(form.email)}}
+    {{macros.render_field(form.telefono)}}
+    {{macros.render_field(form.direccion)}}
+    {{macros.render_field(form.sueldo)}}
+    <input type="submit" name="btn1" value="registrar">
+    </form>
+
+    <h1>nombre: {{nom}}</h1>
+
+{%endblock%}
