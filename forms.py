@@ -3,6 +3,8 @@ from wtforms import StringField,SelectField,RadioField,IntegerField, EmailField
 from wtforms import validators
 
 class EmpForm(Form):
+    id=IntegerField(id)
+
     nombre=StringField('nombre', [
         validators.DataRequired(message='el campo es requerido'),
         validators.length(min=4, max=10,message='ingresa nombre valido')

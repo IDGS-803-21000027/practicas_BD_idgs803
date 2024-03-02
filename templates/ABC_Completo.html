@@ -7,7 +7,7 @@
 <div class="container">
     <div class="row">
         <h3>Empleados</h3>
-        <h4><a href="index.html">Nuevo</a></h4>
+        <h4><a href="index">Nuevo</a></h4>
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -27,8 +27,8 @@
                     <td>{{emp.direccion}}</td>
                     <td>{{emp.sueldo}}</td>
 
-                    <td><a href="eliminar.html?id={{emp.id}}" class="btn btn-danger">Eliminar</a></td>
-                    <td><a href="modificar.html?id={{emp.id}}" class="btn btn-danger">Modificar</a></td>
+                    <td><a href="eliminar?id={{emp.id}}" class="btn btn-danger">Eliminar</a></td>
+                    <td><a href="modificar?id={{emp.id}}" class="btn btn-success">Modificar</a></td>
 
                 </tr>
                 {%endfor%}
