@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzas</title>
+    
+    <link rel="stylesheet" href="../static/bootstrap-5.3.2-dist/css/bootstrap.min.css">
+    <style>
+        body {
+            /* Set the background image */
+            background-image: url('../static/pizza.jpg');
+            /* Set background size to cover the whole screen */
+            background-size: cover;
+            /* Center the background image */
+            background-position: center;
+            /* Fixed background to prevent scrolling */
+            background-attachment: fixed;
+        }
+
+        .custom-background {
+            /* Set the background color */
+            background-color: #f0f0f0; /* Replace with your desired color */
+            /* Add padding to the background */
+            padding: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: lightgray;
+        }
+    </style>
+    <!-- <link href="../static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet"> -->
+</head>
+<body>      
+      <!-- As a heading -->
+      <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+          <span class="navbar-brand mb-0 h1">Pizzas Encargos</span>
+        </div>
+    </nav>
+    <div class="container">
+
+            
+            {%block content%}
+
+            {%endblock%}
+
+    <script src="../static/bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"></script>
+    </div>
+</body>
+</html>
+

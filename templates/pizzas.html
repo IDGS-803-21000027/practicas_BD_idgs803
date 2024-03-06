@@ -1,0 +1,45 @@
+
+{%extends 'layoutPizza.html' %}
+
+{%block content %}
+{% import "_macros.html" as macros %}
+
+    <form name="pizzaRegistro" action="/pizzaIndex" id="pizzaRegistro" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h4><a href="ABCPizza">ABC</a></h4>
+    <br><br>
+    <div style="display: inline-block;">
+        <div class="card text-center text-bg-secondary mb-3" style="width: 20rem">
+            <div class="card-body">
+                <h1>Ingresa tus datos</h1>
+                {{ macros.render_field(formC.nombre, class="form-controls") }} 
+                {{ macros.render_field(formC.direccion) }}                    
+                {{ macros.render_field(formC.telefono) }}
+            </div>
+        </div>
+    </div>
+    <div style="display: inline-block; margin-left: 10px;">
+        <div class="card text-center text-bg-secondary mb-3" style="width: 20rem">
+            <div class="card-body">
+                <input type="submit" id="pizzaRegistrar" name="pizzaRegistrar" value="PizzaRegistrar"/>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: inline-block; margin-left: 10px;">
+        <div class="card text-center text-bg-secondary mb-3" style="width: 20rem">
+            <div class="card-body">
+                <h4>Ingresa el tamaño de tu pizza</h4>
+                {{ macros.render_field(formP.tamano) }}
+                <h4>Ingresa los ingredientes</h4>
+                {{ macros.render_field(formP.ingredientes) }}
+                <h4>Ingresa la cantidad</h4>
+                {{ macros.render_field(formP.cantidad) }}
+            </div>
+        </div>
+    </div>
+    
+    
+    </form>
+
+{%endblock%}

@@ -9,6 +9,7 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     DEBUG=True
-    SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:1234@127.0.0.1/empleadosPruebas'
+    port=5001
+    SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:1234@127.0.0.1/bdAutoGeneradas'
     #SQLALCHEMY_DATABASE_URL='mysql+pymysql://localhost:3306/?user=root'
     SQLALCHEMY_TRACK_MODIFICATION=False

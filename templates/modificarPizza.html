@@ -1,0 +1,41 @@
+
+{%extends 'layout.html' %}
+
+{%block content %}
+
+{% from "_macros.html" import render_field %}
+<div class="container">
+    <div class="row">
+        <form name="registro" action="/modificarPizza" id="modificar" method="post">
+            
+            <div class="row control-group">
+                <div class="form-group col-xs-12 float-label-form-group controls">
+                    {{render_field(form.id, class="form-control")}}
+                </div>
+            </div>
+            <div class="row control-group">
+                <div class="form-group col-xs-12 float-label-form-group controls">
+                    {{render_field(form.tamano, class="form-control")}}
+                </div>
+            </div>
+            <div class="row control-group">
+                <div class="form-group col-xs-12 float-label-form-group controls">
+                    {{render_field(form.ingredientes, class="form-control")}}
+                </div>
+            </div>
+            
+            <div class="row control-group">
+                <div class="form-group col-xs-12 float-label-form-group controls">
+                    {{render_field(form.cantidad, class="form-control")}}
+                </div>
+            </div>
+            
+            <input type="hidden" name="csrf_token" value="{{csrf_token()}}"/>
+            <input type="submit" id="modificar" name="modificar" class="btn btn-danger" value="Modificar"/>
+            <a href="ABCPizza" class="btn btn-success">Cancelar</a>
+
+        </form>
+    </div>
+</div>
+
+{%endblock%}
