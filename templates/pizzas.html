@@ -12,15 +12,25 @@
         <div class="card text-center text-bg-secondary mb-3" style="width: 20rem">
             <div class="card-body">
                 <h1>Ingresa tus datos</h1>
-                {{ macros.render_field(formC.nombre, class="form-controls") }} 
-                {{ macros.render_field(formC.direccion) }}                    
-                {{ macros.render_field(formC.telefono) }}
+                <select id="clienteSelect" name="cliente" onchange="obtenerInformacionCliente()">
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                {{ macros.render_field(formC.nombre, id='nombre', class="form-controls") }} 
+                {{ macros.render_field(formC.direccion, id='direccion') }}                    
+                {{ macros.render_field(formC.telefono, id='telefono') }}
             </div>
         </div>
     </div>
     <div style="display: inline-block; margin-left: 10px;">
         <div class="card text-center text-bg-secondary mb-3" style="width: 20rem">
             <div class="card-body">
+                <div class="form-group">
+                    <label for="fecha">Fecha:</label>
+                    <input type="date" class="form-control" id="fecha" name="fecha">
+                </div>
                 <input type="submit" id="pizzaRegistrar" name="pizzaRegistrar" value="PizzaRegistrar"/>
             </div>
         </div>
@@ -39,7 +49,7 @@
         </div>
     </div>
     
-    
     </form>
+
 
 {%endblock%}

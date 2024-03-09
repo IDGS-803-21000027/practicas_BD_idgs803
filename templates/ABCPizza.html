@@ -46,37 +46,104 @@
                 {%endfor%}
             </tbody>
         </table>
+        
+
         {% if pizzasHoy %}
             <div class="container">
                 <div class="row">
-                    <h3>Clientes de hoy</h3>
+                    <h3>Clientes y precios</h3>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
                                 <th>Nombre</th>
                                 <th>Dirección</th>
                                 <th>Teléfono</th>
+                                <th>Tamaño</th>
+                                <th>Ingredientes</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for cliente in pizzasHoy %}
+                            {% for cliente, pizza in pizzasHoy %}
                                 <tr>
                                     <td>{{ cliente.nombre }}</td>
                                     <td>{{ cliente.direccion }}</td>
                                     <td>{{ cliente.telefono }}</td>
+                                    <td>{{ pizza.tamano }}</td>
+                                    <td>{{ pizza.ingredientes }}</td>
+                                    <td>{{ pizza.cantidad }}</td>
+                                    <td>{{ pizza.subtotal }}</td>
                                 </tr>
                             {% endfor %}
+                            <tr>
+                                <td colspan="6"><strong>Total:</strong></td>
+                                <td><strong>{{ suma_subtotales }}</strong></td>
+                            </tr>
                         </tbody>
-                    </table>
+                    </table>                    
                 </div>
             </div>
         {% else %}
             <p>No hay clientes registrados para hoy.</p>
         {% endif %}
+            
+        </form>
         <form action="" method="post">
+            <div class="form-group">
+                <label for="busqueda">Buscar por:</label>
+                <select class="form-control" id="busqueda" name="busqueda">
+                    <option value="">Selecciona una opcion</option>
+
+                    <option value="dia_semana">Día de la semana</option>
+                    <option value="mes">Mes del año</option>
+                </select>
+            </div>
+            <div class="form-group" id="divDiaSemana" style="display: none;">
+                <label for="dia_semana">Día de la semana:</label>
+                <select class="form-control" id="dia_semana" name="dia_semana">
+                    <option value="lunes">Lunes</option>
+                    <option value="martes">Martes</option>
+                    <option value="miercoles">Miércoles</option>
+                    <option value="jueves">Jueves</option>
+                    <option value="viernes">Viernes</option>
+                    <option value="sabado">Sábado</option>
+                    <option value="domingo">Domingo</option>
+                </select>
+            </div>
+            <div class="form-group" id="divMes" style="display: none;">
+                <label for="mes">Mes del año:</label>
+                <select class="form-control" id="mes" name="mes">
+                    <option value="enero">Enero</option>
+                    <option value="febrero">Febrero</option>
+                    <option value="marzo">Marzo</option>
+                    <option value="abril">Abril</option>
+                    <option value="mayo">Mayo</option>
+                    <option value="junio">Junio</option>
+                    <option value="julio">Julio</option>
+                    <option value="agosto">Agosto</option>
+                    <option value="septiembre">Septiembre</option>
+                    <option value="octubre">Octubre</option>
+                    <option value="noviembre">Noviembre</option>
+                    <option value="diciembre">Diciembre</option>
+                </select>
+            </div>
             <input type="hidden" name="csrf_token" value="{{csrf_token()}}"/>
             <button type="submit" name="terminar" class="btn btn-primary">Terminar</button>
         </form>
+        <script>
+            // JavaScript para mostrar y ocultar los campos de selección según la opción elegida
+            document.getElementById('busqueda').addEventListener('change', function() {
+                var seleccion = this.value;
+                if (seleccion === 'dia_semana') {
+                    document.getElementById('divDiaSemana').style.display = 'block';
+                    document.getElementById('divMes').style.display = 'none';
+                } else if (seleccion === 'mes') {
+                    document.getElementById('divDiaSemana').style.display = 'none';
+                    document.getElementById('divMes').style.display = 'block';
+                }
+            });
+        </script>
     </div>
 </div>
 

@@ -52,8 +52,32 @@
             {%block content%}
 
             {%endblock%}
-
+    
     <script src="../static/bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/js/indexPizza.js"></script>
+    <script>
+        // Función para obtener la información del cliente seleccionado
+        function obtenerInformacionCliente() {
+            var clienteId = document.getElementById('clienteSelect').value;
+            // Realizar una solicitud AJAX para obtener la información del cliente
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/obtener_informacion_cliente?id=' + clienteId, true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var cliente = JSON.parse(xhr.responseText);
+                    // Rellenar los campos de nombre, dirección y teléfono
+                    document.getElementById('nombre').value = cliente.nombre;
+                    document.getElementById('direccion').value = cliente.direccion;
+                    document.getElementById('telefono').value = cliente.telefono;
+                }
+            };
+            xhr.send();
+        }
+    
+        // Asociar la función obtenerInformacionCliente al evento onChange del select
+        document.getElementById('clienteSelect').addEventListener('change', obtenerInformacionCliente);
+    </script>
+    
     </div>
 </body>
 </html>

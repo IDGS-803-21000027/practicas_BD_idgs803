@@ -104,26 +104,54 @@ def alum():
         
     return render_template("empleados.html", form=emp_form,nom=nom,tel=tel,suel=suel,dir=dir,email=email)
 
+# Ruta para obtener la información del cliente
+@app.route('/obtener_informacion_cliente')
+def obtener_informacion_cliente():
+    cliente_id = request.args.get('id')
+    # Consultar la base de datos para obtener el cliente por su ID
+    cliente = Cliente.query.filter_by(id=cliente_id).first()
+    if cliente:
+        # Crear un diccionario con la información del cliente
+        info_cliente = {
+            'id': cliente.id,
+            'nombre': cliente.nombre,
+            'direccion': cliente.direccion,
+            'telefono': cliente.telefono
+        }
+        # Devolver la información del cliente en formato JSON
+        return jsonify(info_cliente)
+    else:
+        # Devolver un mensaje de error si el cliente no se encuentra
+        return jsonify({'error': 'Cliente no encontrado'}), 404
 
 @app.route("/pizzaIndex",methods=["GET","POST"])
 def pizzaIndex():
     pizzaForm = forms.pizzasForm(request.form)
     clienteForm = forms.clienteForm(request.form)
+    if request.method == 'GET':
+        clientes = Cliente.query.all()
+        
+        return render_template("pizzas.html", formC=clienteForm, formP=pizzaForm, clientes=clientes)
+    clienteForm = forms.clienteForm(request.form)
     if request.method == 'POST' and pizzaForm.validate() and clienteForm.validate():
+        fecha_busqueda = request.form.get('fecha')
         cli = Cliente(nombre=clienteForm.nombre.data,
                      direccion=clienteForm.direccion.data,
-                     telefono=clienteForm.telefono.data)
-        db.session.add(cli)
-
-        subtotal = (int(pizzaForm.tamano.data) + 10)*pizzaForm.cantidad.data
-        cli = Pizzas(tamano=pizzaForm.tamano.data,
-                     ingredientes=pizzaForm.ingredientes.data,
-                     cantidad=pizzaForm.cantidad.data,
-                     subtotal=subtotal)
+                     telefono=clienteForm.telefono.data,
+                     fecha=fecha_busqueda)
         db.session.add(cli)
         db.session.commit()
+
+        subtotal = (int(pizzaForm.tamano.data) + 10)*pizzaForm.cantidad.data
+        pi = Pizzas(tamano=pizzaForm.tamano.data,
+                     ingredientes=pizzaForm.ingredientes.data,
+                     cantidad=pizzaForm.cantidad.data,
+                     subtotal=subtotal,
+                     cliente_id=cli.id)
+        db.session.add(pi)
+        db.session.commit()
         return redirect('ABCPizza')
-    return render_template("pizzas.html", formC=clienteForm, formP=pizzaForm)
+        
 
 
 @app.route("/ABCPizza",methods=["GET","POST"])
@@ -132,21 +160,43 @@ def ABC_Pizza():
     if request.method=='GET':
         pizzas=Pizzas.query.all()
     if request.method=='POST':
-        # Obtenemos la fecha actual y la convertimos en una cadena
-        fecha_actual = str(datetime.now().date())
+        #fecha_actual = str(datetime.now().date())
+        #fecha_actual = fecha_actual[:10]
+        #fecha_busqueda = request.form.get('fecha')
+        busqueda = request.form.get('busqueda')
 
-        
-        # Limitamos la cadena a los primeros 10 caracteres
-        fecha_actual = fecha_actual[:10]
-        print(fecha_actual)
-        
-        # Consultamos la base de datos para recuperar los registros de la tabla Cliente
-        pizzasHoy = Cliente.query.filter(func.substr(Cliente.fecha, 1, 10) == fecha_actual).all()
+        #print(fecha_busqueda)
 
-        # Convertimos los resultados a un formato JSON para pasarlos al template
-        # pizzasHoy_json = jsonify([pizza.serialize() for pizza in pizzasHoy])
+        if busqueda == 'dia_semana':
+            dia_semana = request.form.get('dia_semana')
+            # Convertir el día de la semana a un número (1 para lunes, 2 para martes, etc.)
+            dia_semana_numero = ['domingo','lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'].index(dia_semana) + 1
+            print(dia_semana_numero)
+            # Realizar la consulta utilizando el día de la semana
+            pizzasHoy = db.session.query(Cliente, Pizzas).filter(
+                func.DAYOFWEEK(Cliente.fecha) == dia_semana_numero,
+                Cliente.id == Pizzas.cliente_id
+            ).all()
+            
+        elif busqueda == 'mes':
+            mes = request.form.get('mes')
+            # Convertir el nombre del mes a su número correspondiente
+            mes_numero = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'].index(mes) + 1
+            # Realizar la consulta utilizando el mes del año
+            pizzasHoy = db.session.query(Cliente, Pizzas).filter(
+                func.extract('month', Cliente.fecha) == mes_numero,
+                Cliente.id == Pizzas.cliente_id
+            ).all()
+
+
+        # pizzasHoy = db.session.query(Cliente, Pizzas).filter(
+        #     func.substr(Cliente.fecha, 1, 10) == fecha_busqueda,
+        #     Cliente.id == Pizzas.cliente_id
+        # ).all()
+        
+        suma_subtotales = sum(pizza.subtotal for cliente, pizza in pizzasHoy)
     
-        return render_template("ABCPizza.html", pizzasHoy=pizzasHoy)
+        return render_template("ABCPizza.html", pizzasHoy=pizzasHoy, suma_subtotales=suma_subtotales)
 
     return render_template("ABCPizza.html", pizzas=pizzas)
 

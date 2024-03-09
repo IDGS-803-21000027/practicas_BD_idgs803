@@ -33,7 +33,7 @@ class Cliente(db.Model):
     nombre=db.Column(db.String(100))
     direccion=db.Column(db.String(100))
     telefono=db.Column(db.String(20))
-    fecha = db.Column(db.DateTime,default=datetime.now)  # Agregar el campo de fecha
+    fecha = db.Column(db.DateTime)  # Agregar el campo de fecha
 
     # Establecer la relación uno a muchos con Pizzas
     pizzas = relationship("Pizzas", back_populates="cliente")
