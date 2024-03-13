@@ -1,0 +1,231 @@
+
+{% extends 'layoutPizza.html' %}
+
+{% block content%}
+
+{% from "_macros.html" import render_field %}
+
+
+<div class="row p-5">
+    <form name="registro" action="/pizzaIndex" id="registro" method="post">
+    <div class="card m-2">
+        <div class="card-header">
+            <h1>Ingresa tus datos</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="form-group col-xs-12 float-label-form-group controls">
+                    {{render_field(formPizza.fechaCompra,class="form-control")}}
+                </div>
+            </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group col-xs-12 float-label-form-group controls">
+                            {{render_field(formPizza.nombreCompleto, class="form-control")}}
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group col-xs-12 float-label-form-group controls">
+                            {{render_field(formPizza.direccion,class="form-control")}}
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group float-label-form-group controls">
+                            {{render_field(formPizza.jamon, class="form-check")}}
+                        </div>
+                        <div class="form-group float-label-form-group controls">
+                            {{render_field(formPizza.pinia, class="form-check")}}
+                        </div>
+                        <div class="form-group float-label-form-group controls">
+                            {{render_field(formPizza.champiniones, class="form-check")}}
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group col-xs-12 float-label-form-group controls">
+                            {{render_field(formPizza.tamano, class="form-check")}}
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group col-xs-12 float-label-form-group controls">
+                            {{render_field(formPizza.telefono,class="form-control")}}
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group col-xs-12 float-label-form-group controls">
+                            {{render_field(formPizza.cantidad,class="form-control")}}
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="row">
+                    <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+                    <button type="submit" name="action" value="Postular" class="btn btn-primary">Agregar</button>
+                </div>
+                <div class="row m-3">
+                    <div class="col-8">
+                        <table class="table table-info">
+
+                            <head>
+                                <tr>
+                                    <th>Tamaño</th>
+                                    <th>Ingredientes</th>
+                                    <th>Num. Pizzas</th>
+                                    <th>SubTotal</th>
+                                    <th>Eliminar</th>
+                                </tr>
+                            </head>
+                            <tbody>
+                                {% for piza in pizza %}
+
+                                <tr>
+                                    <td>{{ piza.tamanio }}</td>
+                                    <td>{{ piza.ingredientes }}</td>
+                                    <td>{{ piza.cantidad }}</td>
+                                    <td>{{ piza.subtotal }}</td>
+                                    <input type="hidden" name="indice" value="{{ loop.index0 }}"/>
+                                    <td><button type="submit" name="action" value="Eliminar" class="btn btn-danger">Eliminar</button></td>
+                                </tr>
+
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div>
+                            <button type="submit" name="action" value="Cobrar" class="btn btn-primary">Terminar</button>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <table class="table table-info">
+
+                            <head>
+                                <tr>
+                                    
+                                    <th>Total</th>
+                                </tr>
+                            </head>
+                            <tbody>
+                                
+
+                                <tr>
+                                    <td>{{ total }}</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+
+    <div class="card m-2">
+        <div class="card-header">
+            <h1>Ingresa tus datos</h1>
+        </div>
+        <div class="card-body">
+            {% if pizzasHoy %}
+                        <div class="container">
+                            <div class="row">
+                                <h3>Clientes y precios</h3>
+                                <table class="table table-info">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Dirección</th>
+                                            <th>Teléfono</th>
+                                            <th>Total</th>
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for cliente in pizzasHoy %}
+                                            <tr>
+                                                <td>{{ cliente.nombre }}</td>
+                                                <td>{{ cliente.direccion }}</td>
+                                                <td>{{ cliente.telefono }}</td>
+                                                <td>{{cliente.total}}</td>
+                                                
+                                            </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <td colspan="3"><strong>Total:</strong></td>
+                                            <td><strong>{{ suma_subtotales }}</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>                    
+                            </div>
+                        </div>
+            {% else %}
+                <p>Selecciona la opcion de filtrado.</p>
+            {% endif %}
+
+            
+                <div class="form-group">
+                    <label for="busqueda">Buscar por:</label>
+                    <select class="form-control" id="busqueda" name="busqueda">
+                        <option value="">Selecciona una opcion</option>
+            
+                        <option value="dia_semana">Día de la semana</option>
+                        <option value="mes">Mes del año</option>
+                    </select>
+                </div>
+                <div class="form-group" id="divDiaSemana" style="display: none;">
+                    <label for="dia_semana">Día de la semana:</label>
+                    <select class="form-control" id="dia_semana" name="dia_semana">
+                        <option value="lunes">Lunes</option>
+                        <option value="martes">Martes</option>
+                        <option value="miercoles">Miércoles</option>
+                        <option value="jueves">Jueves</option>
+                        <option value="viernes">Viernes</option>
+                        <option value="sabado">Sábado</option>
+                        <option value="domingo">Domingo</option>
+                    </select>
+                </div>
+                <div class="form-group" id="divMes" style="display: none;">
+                    <label for="mes">Mes del año:</label>
+                    <select class="form-control" id="mes" name="mes">
+                        <option value="enero">Enero</option>
+                        <option value="febrero">Febrero</option>
+                        <option value="marzo">Marzo</option>
+                        <option value="abril">Abril</option>
+                        <option value="mayo">Mayo</option>
+                        <option value="junio">Junio</option>
+                        <option value="julio">Julio</option>
+                        <option value="agosto">Agosto</option>
+                        <option value="septiembre">Septiembre</option>
+                        <option value="octubre">Octubre</option>
+                        <option value="noviembre">Noviembre</option>
+                        <option value="diciembre">Diciembre</option>
+                    </select>
+                </div>
+                <input type="hidden" name="csrf_token" value="{{csrf_token()}}"/>
+                
+                <div>
+                    <button type="submit" name="action" value="Buscar" class="btn btn-primary">Buscar</button>
+                </div>
+            </form>
+            <script>
+                // JavaScript para mostrar y ocultar los campos de selección según la opción elegida
+                document.getElementById('busqueda').addEventListener('change', function() {
+                    var seleccion = this.value;
+                    if (seleccion === 'dia_semana') {
+                        document.getElementById('divDiaSemana').style.display = 'block';
+                        document.getElementById('divMes').style.display = 'none';
+                    } else if (seleccion === 'mes') {
+                        document.getElementById('divDiaSemana').style.display = 'none';
+                        document.getElementById('divMes').style.display = 'block';
+                    }
+                });
+            </script>
+
+        </div>
+    </div>
+</div>
+
+{%endblock%}

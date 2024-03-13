@@ -3,12 +3,13 @@ from flask_wtf.csrf import CSRFProtect
 from flask import g, redirect
 from datetime import datetime
 from sqlalchemy import func
+from models import pizzaModel, clientePizzaModel
 
 from config import DevelopmentConfig
 from flask import flash
 import forms
 from models import db
-from models import Empleados, Cliente, Pizzas
+from models import Empleados
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
@@ -124,15 +125,134 @@ def obtener_informacion_cliente():
         # Devolver un mensaje de error si el cliente no se encuentra
         return jsonify({'error': 'Cliente no encontrado'}), 404
 
+listaDePizzas = []
 @app.route("/pizzaIndex",methods=["GET","POST"])
 def pizzaIndex():
+    pizzaForm = forms.pizzasForm(request.form)
+    global listaDePizzas
+    total=0
+    subTotal = 0
+    jamon = ''
+    jamonCosto = 0
+    pina = ''
+    pinaCosto = 0
+    champinon = ''
+    champinonCosto = 0
+    ingredientesSelec = ''
+    pizzasHoy = []
+    suma_subtotales=0
+    if request.method == 'GET':
+        return redirect('pizzaIndex.html')
+    if request.method == 'POST' and pizzaForm.validate():
+        if request.form['action'] == 'Postular':
+            
+            tamano = int(pizzaForm.tamano.data)
+            if tamano == 40:
+                tamanioDesc = 'Pequena'
+            elif tamano == 80:
+                tamanioDesc = 'Mediana'
+            elif tamano == 120:
+                tamanioDesc = 'Grande'
+            cantidad = int(pizzaForm.cantidad.data)
+            
+            if pizzaForm.jamon.data:
+                jamonCosto = 10
+                ingredientesSelec += 'Jamon '
+            if pizzaForm.champiniones.data:
+                champinonCosto = 10
+                ingredientesSelec += 'Champinones '
+            if pizzaForm.pinia.data:
+                pinaCosto = 10
+                ingredientesSelec += 'Pina '
+
+            subTotal = (tamano + jamonCosto+champinonCosto+pinaCosto)*cantidad
+            
+            listaDePizzas.append({
+                'tamanio': tamano, 
+                'ingredientes': ingredientesSelec, 
+                'cantidad':cantidad, 
+                'subtotal': subTotal
+            })
+            total = 0
+            for pizza in listaDePizzas:
+
+                total = total + pizza['subtotal']
+        
+        elif request.form['action'] == 'Cobrar':
+            
+            total = 0
+            for pizza in listaDePizzas:
+
+                total = total + pizza['subtotal']
+            cliente = clientePizzaModel(
+                nombre = pizzaForm.nombreCompleto.data,
+                direccion = pizzaForm.direccion.data,
+                telefono = pizzaForm.telefono.data,
+                total = total,
+                fecha = pizzaForm.fechaCompra.data
+            )
+            
+            db.session.add(cliente)
+            db.session.commit()
+            total = 0
+            for pizza in listaDePizzas:
+
+                total = total + pizza['subtotal']
+                pizzas = pizzaModel(
+                    tamano = pizza['tamanio'],
+                    ingredientes = pizza['ingredientes'],
+                    cantidad = pizza['cantidad'],
+                    cliente_id=cliente.id
+                )
+                db.session.add(pizzas)
+                db.session.commit()
+                
+            listaDePizzas = []
+            total = 0
+        elif request.form['action'] == 'Buscar':  
+            busqueda = request.form.get('busqueda')
+
+            if busqueda == 'dia_semana':
+                dia_semana = request.form.get('dia_semana')
+                # Convertir el día de la semana a un número (1 para lunes, 2 para martes, etc.)
+                dia_semana_numero = ['domingo','lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'].index(dia_semana) + 1
+                # Realizar la consulta utilizando el día de la semana
+                pizzasHoy = db.session.query(clientePizzaModel).filter(
+                    func.DAYOFWEEK(clientePizzaModel.fecha) == dia_semana_numero
+                ).all()
+            elif busqueda == 'mes':
+                mes = request.form.get('mes')
+                # Convertir el nombre del mes a su número correspondiente
+                mes_numero = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'].index(mes) + 1
+                # Realizar la consulta utilizando el mes del año
+                pizzasHoy = db.session.query(clientePizzaModel).filter(
+                    func.extract('month', clientePizzaModel.fecha) == mes_numero
+                ).all()
+            suma_subtotales = sum(cliente.total for cliente in pizzasHoy)
+            print(suma_subtotales)
+            for cliente in pizzasHoy:
+                print(f"Total de {cliente.nombre}: {cliente.total}")   
+
+        elif request.form['action'] == 'Eliminar':
+            indice = 0
+            print(indice)
+            print(listaDePizzas)
+            indice = int(request.form['indice'])
+            del listaDePizzas[indice]
+            
+              
+    return render_template("indexPizza.html", formPizza = pizzaForm, pizza = listaDePizzas,suma_subtotales=suma_subtotales, total = total, pizzasHoy=pizzasHoy)
+
+
+@app.route("/pizzaIndex2",methods=["GET","POST"])
+def pizzaIndex2():
+    
     pizzaForm = forms.pizzasForm(request.form)
     clienteForm = forms.clienteForm(request.form)
     if request.method == 'GET':
         clientes = Cliente.query.all()
         
         return render_template("pizzas.html", formC=clienteForm, formP=pizzaForm, clientes=clientes)
-    clienteForm = forms.clienteForm(request.form)
     if request.method == 'POST' and pizzaForm.validate() and clienteForm.validate():
         fecha_busqueda = request.form.get('fecha')
         cli = Cliente(nombre=clienteForm.nombre.data,
@@ -150,7 +270,9 @@ def pizzaIndex():
                      cliente_id=cli.id)
         db.session.add(pi)
         db.session.commit()
-        return redirect('ABCPizza')
+        return redirect('pizzaIndex')
+        
+
         
 
 

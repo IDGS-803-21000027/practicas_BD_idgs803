@@ -13,6 +13,7 @@
             <div class="card-body">
                 <h1>Ingresa tus datos</h1>
                 <select id="clienteSelect" name="cliente" onchange="obtenerInformacionCliente()">
+                    <option value="">Selecciona una opcion</option>
                     {% for cliente in clientes %}
                         <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
                     {% endfor %}
@@ -31,7 +32,9 @@
                     <label for="fecha">Fecha:</label>
                     <input type="date" class="form-control" id="fecha" name="fecha">
                 </div>
-                <input type="submit" id="pizzaRegistrar" name="pizzaRegistrar" value="PizzaRegistrar"/>
+                <br><input type="submit" id="pizzaRegistrar" name="pizzaRegistrar" value="PizzaRegistrar"/>
+                <br><button type="reset">Resetear Formulario</button>
+
             </div>
         </div>
     </div>

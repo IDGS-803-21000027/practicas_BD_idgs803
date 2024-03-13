@@ -1,6 +1,7 @@
 from wtforms import Form
-from wtforms import StringField,SelectField,RadioField,IntegerField, EmailField, BooleanField, SelectMultipleField
+from wtforms import StringField,SelectField,RadioField,IntegerField, EmailField, BooleanField, DateField
 from wtforms import validators
+from wtforms.validators import InputRequired
 from wtforms.validators import DataRequired
 
 class EmpForm(Form):
@@ -49,15 +50,17 @@ class pizzasForm(Form):
     tamano = RadioField('Tamaños', choices=CHOICES_RADIO)
 
     # Define choices for CheckboxField
-    # CHOICES_CHECKBOX = [('10', 'Jamon'), ('10', 'Piña'), ('10', 'Champiñones')]
-    # ingredientes = CheckboxField('Ingredientes', choices=CHOICES_CHECKBOX)
-    INGREDIENT_CHOICES = [
-        ('jamon', 'Jamon'),
-        ('pina', 'Piña'),
-        ('champinones', 'Champiñones')
-    ]
-    ingredientes = SelectField('Ingredientes', choices=INGREDIENT_CHOICES, validators=[DataRequired()], coerce=str)
-
-    cantidad=IntegerField('Cantidad', [
-        validators.number_range(min=1,message='Valor no valido')
-    ])
+    jamon = BooleanField('Jamon')
+    pinia = BooleanField('Piña')
+    champiniones = BooleanField('Champiñones')
+    # INGREDIENT_CHOICES = [
+    #     ('jamon', 'Jamon'),
+    #     ('pina', 'Piña'),
+    #     ('champinones', 'Champiñones')
+    # ]
+    # ingredientes = SelectField('Ingredientes', choices=INGREDIENT_CHOICES, validators=[DataRequired()], coerce=str)
+    cantidad = IntegerField('Numero de pizzas', validators=[InputRequired()])
+    nombreCompleto = StringField('Nombre:', validators=[InputRequired()])
+    direccion = StringField('Direccion:', validators=[InputRequired()])
+    telefono = StringField('Telefono:', validators=[InputRequired()])
+    fechaCompra = DateField('Fecha compra:', validators=[InputRequired()])
