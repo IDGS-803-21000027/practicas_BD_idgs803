@@ -142,9 +142,10 @@ def pizzaIndex():
     pizzasHoy = []
     suma_subtotales=0
     if request.method == 'GET':
-        return redirect('pizzaIndex.html')
-    if request.method == 'POST' and pizzaForm.validate():
-        if request.form['action'] == 'Postular':
+        return render_template('indexPizza.html', formPizza = pizzaForm)
+    if request.method == 'POST':# and pizzaForm.validate():
+        print('entro al post')
+        if request.form['action'] == 'Postular' and pizzaForm.validate():
             
             tamano = int(pizzaForm.tamano.data)
             if tamano == 40:
@@ -211,7 +212,7 @@ def pizzaIndex():
             total = 0
         elif request.form['action'] == 'Buscar':  
             busqueda = request.form.get('busqueda')
-
+            print('Esta buscando')
             if busqueda == 'dia_semana':
                 dia_semana = request.form.get('dia_semana')
                 # Convertir el día de la semana a un número (1 para lunes, 2 para martes, etc.)
